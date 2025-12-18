@@ -2,7 +2,7 @@ import User from "../models/auth.model.js";
 import uploadCloudinary from "../utils/Cloudinary.js";
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken'
-
+import crypto from 'crypto'
 
 export const registerController = async (req, res) => {
     try {
@@ -100,16 +100,32 @@ export const loginController = async (req, res) => {
 };
 
 export const forgotPasswordController = async (req, res) => {
-    const { email } = req.body
-    const user = await User.findOne({ email })
-    if (!user) {
-        return res.status(400).json({
-            success: false,
-            message: "Please provide Correct Email"
-        })
-        const randmo = []
-        const genRamdo = Math.random() * 10
+    try {
+        const { email } = req.body
+        const user = await User.findOne({ email })
+        if (!user) {
+            return res.status(400).json({
+                success: false,
+                message: "Please provide Correct Email"
+            })
 
+
+        }
+        const otp = Math.floor(Math.random() * 9000).toString()
+        const hashOtp = crypto.createHash('sha256').update(otp).digest('hex')
+        user.resetOtp = hashOtp
+        user.resetOtpExpire = Date.now() + 10 * 60 * 1000
+        await user.save()
+        console.log('OTP IS', otp)
+        res.status(200).json({
+            success: true,
+            message: 'OTP send successfully'
+        })
+    } catch (error) {
+        res.status(500).json({
+            success: false,
+            message: "Server error"
+        });
     }
 }
 

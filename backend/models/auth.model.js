@@ -29,6 +29,12 @@ const userSchema = new mongoose.Schema({
         type: String,
         enum: ['user', 'admin', 'Kitchen'],
         default: 'user'
+    },
+    resetOtp: {
+        type: String
+    },
+    resetOtpExpire: {
+        type: Date
     }
 }, { timestamps: true });
 
