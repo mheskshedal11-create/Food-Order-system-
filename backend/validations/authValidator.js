@@ -47,6 +47,25 @@ export const authRegister = [validateFullName, validateEmail, validatePhoneNumbe
 export const authLogin = [validateEmail, validatePassword]
 export const authResetPassword = [validatenewPassword]
 
+
+// =====================================cateogry validation =======================================
+
+const validationCategoryName = body('categoryName')
+    .notEmpty().withMessage('Category is required')
+    .bail()
+    .isLength({ min: 3, max: 20 }).withMessage('Category name must be between 3 and 20 characters');
+
+const validationDescription = body('description')
+    .notEmpty().withMessage('Description is required')
+    .bail()
+    .isLength({ min: 3, max: 150 }).withMessage('Description must be between 3 and 150 characters');
+
+export const categoryValidation = [validationCategoryName, validationDescription];
+
+
+
+// ======================================Error Handling===================================================
+
 export const validate = (req, res, next) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
