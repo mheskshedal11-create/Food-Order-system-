@@ -1,0 +1,126 @@
+import User from "../models/auth.model.js";
+import uploadCloudinary from "../utils/Cloudinary.js";
+import bcrypt from 'bcrypt';
+import jwt from 'jsonwebtoken'
+
+
+export const registerController = async (req, res) => {
+    try {
+        const { fullName, email, password, phoneNumber, role } = req.body;
+
+        const existingUser = await User.findOne({ email });
+        if (existingUser) {
+            return res.status(400).json({
+                success: false,
+                message: 'Email already exists'
+            });
+        }
+
+        const hashPassword = await bcrypt.hash(password, 10);
+
+        const newUser = new User({
+            fullName,
+            email,
+            password: hashPassword,
+            phoneNumber,
+            role: role || 'user',
+        });
+
+        if (req.file) {
+            const profileImage = await uploadCloudinary(req.file.path);
+            newUser.profileImage = profileImage;
+        }
+
+        await newUser.save();
+
+        const user = newUser.toObject();
+        delete user.password;
+
+        res.status(201).json({
+            success: true,
+            message: 'User registered successfully',
+            user
+        });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({
+            success: false,
+            message: 'Internal Server Error'
+        });
+    }
+};
+
+
+export const loginController = async (req, res) => {
+    try {
+        const { email, password } = req.body;
+
+        const existingUser = await User.findOne({ email }).select("+password");
+        if (!existingUser) {
+            return res.status(400).json({
+                success: false,
+                message: 'Invalid email or password'
+            });
+        }
+
+        const comparePassword = await bcrypt.compare(password, existingUser.password);
+        if (!comparePassword) {
+            return res.status(400).json({
+                success: false,
+                message: 'Invalid email or password'
+            });
+        }
+
+        const token = jwt.sign(
+            { userId: existingUser._id, role: existingUser.role },
+            process.env.JWT_SECRET,
+            { expiresIn: '7d' }
+        );
+        res.cookie('token', token, {
+            maxAge: 7 * 24 * 60 * 60 * 1000
+
+        })
+        const user = existingUser.toObject();
+        delete user.password;
+
+        res.status(200).json({
+            success: true,
+            message: 'Login successfully',
+            user,
+            token
+        });
+
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({
+            success: false,
+            message: 'Internal Server Error'
+        });
+    }
+};
+
+export const forgotPasswordController = async (req, res) => {
+    const { email } = req.body
+    const user = await User.findOne({ email })
+    if (!user) {
+        return res.status(400).json({
+            success: false,
+            message: "Please provide Correct Email"
+        })
+        const randmo = []
+        const genRamdo = Math.random() * 10
+
+    }
+}
+
+export const logOutController = async (req, res) => {
+    try {
+        await res.clearCookie('token')
+        res.status(200).json({
+            success: false,
+            message: "Logout Successfully"
+        })
+    } catch (error) {
+        console.log(error)
+    }
+}

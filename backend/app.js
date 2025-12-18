@@ -1,18 +1,19 @@
 import express from 'express'
 import 'dotenv/config'
-
+import morgan from 'morgan'
+import helmet from 'helmet'
+import cookieParser from 'cookie-parser'
 const app = express()
 
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 
-//global error handling 
-app.use((err, req, res, next) => {
-    console.error(err.stack);
 
-    res.status(err.status || 500).json({
-        success: false,
-        message: err.message || "Internal Server Error",
-    });
-});
+app.use(helmet())
+app.use(morgan('dev'))
+app.use(cookieParser())
+
+
 
 
 
