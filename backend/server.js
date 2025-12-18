@@ -1,13 +1,13 @@
 import app from "./app.js";
 import connectDb from "./database/connection.js";
-import authRouer from "./routes/auth.route.js";
+import authRouter from "./routes/auth.route.js";
 
 const PORT = process.env.PORT || 4000
 connectDb()
 
 
 //router setup
-app.use('/api/v1/auth', authRouer)
+app.use('/api/v1/auth', authRouter)
 
 
 

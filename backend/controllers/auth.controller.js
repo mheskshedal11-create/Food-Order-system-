@@ -50,7 +50,6 @@ export const registerController = async (req, res) => {
     }
 };
 
-
 export const loginController = async (req, res) => {
     try {
         const { email, password } = req.body;
@@ -131,7 +130,7 @@ export const forgotPasswordController = async (req, res) => {
         console.log('OTP IS', otp)
         res.status(200).json({
             success: true,
-            message: 'OTP send successfully'
+            message: 'OTP send successfully', otp
         })
     } catch (error) {
         res.status(500).json({
@@ -176,3 +175,27 @@ export const resetPasswordController = async (req, res) => {
 
     }
 }
+
+
+export const getUseProfileController = async (req, res) => {
+
+    try {
+        const userId = req.user._id
+
+        const user = await User.findById(userId)
+        if (!user) {
+            return res.status(400).json({
+                success: false,
+                message: "User not found"
+            })
+        }
+        res.status(200).json({
+            success: true,
+            message: 'profile fetch successfully',
+            user
+        })
+    } catch (error) {
+
+    }
+}
+

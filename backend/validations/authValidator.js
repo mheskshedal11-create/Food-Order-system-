@@ -24,6 +24,18 @@ const validatePassword = body('password')
     .matches(/[0-9]/).withMessage('Password must contain at least one number')
     .bail()
     .matches(/[@$!%*?&#]/).withMessage('Password must contain at least one symbol (@$!%*?&#)');
+const validatenewPassword = body('newPassword')
+    .notEmpty().withMessage('Password is required')
+    .bail()
+    .isLength({ min: 6 }).withMessage('Password should be minimum 6 characters')
+    .bail()
+    .matches(/[A-Z]/).withMessage('Password must contain at least one uppercase letter')
+    .bail()
+    .matches(/[a-z]/).withMessage('Password must contain at least one lowercase letter')
+    .bail()
+    .matches(/[0-9]/).withMessage('Password must contain at least one number')
+    .bail()
+    .matches(/[@$!%*?&#]/).withMessage('Password must contain at least one symbol (@$!%*?&#)');
 const validatePhoneNumber = body('phoneNumber')
     .notEmpty().withMessage('Phone number is required')
     .bail()
@@ -33,6 +45,7 @@ const validatePhoneNumber = body('phoneNumber')
 
 export const authRegister = [validateFullName, validateEmail, validatePhoneNumber, validatePassword];
 export const authLogin = [validateEmail, validatePassword]
+export const authResetPassword = [validatenewPassword]
 
 export const validate = (req, res, next) => {
     const errors = validationResult(req);
