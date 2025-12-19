@@ -39,3 +39,51 @@ export const menuItemController = async (req, res) => {
         });
     }
 };
+
+export const getMenuItemByIdController = async (req, res) => {
+    try {
+        const { id } = req.params
+        const getMenu = await MenuItem.findById(id)
+        if (!getMenu) {
+            return res.status(400).json({
+                success: false,
+                message: 'item not foudn'
+            })
+        }
+        return res.status(200).json({
+            success: true,
+            message: 'Menu Item',
+            getMenu
+        })
+    } catch (error) {
+        console.log(error)
+        res.status(500).json({
+            success: false,
+            message: "server error"
+        })
+
+    }
+}
+
+export const getAllMenuItemController = async (req, res) => {
+    try {
+        const getall = await MenuItem.find({}).populate('category', 'categoryName -_id')
+        if (getall.length <= 0) {
+            return res.status(400).json({
+                success: false,
+                message: 'item not availabel '
+            })
+        }
+        res.status(200).json({
+            success: true,
+            message: 'Items are',
+            getall
+        })
+    } catch (error) {
+        console.log(error)
+        res.status(500).json({
+            success: false,
+            message: 'server error'
+        })
+    }
+}
