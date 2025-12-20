@@ -16,7 +16,7 @@ const blogSchema = new mongoose.Schema({
     },
     blogImage: {
         type: String,
-        default: 'profile.png'
+        default: 'https://via.placeholder.com/800x400?text=Blog+Image'
     },
     user: {
         type: mongoose.Schema.Types.ObjectId,
@@ -29,6 +29,7 @@ const blogSchema = new mongoose.Schema({
         default: 'published'
     },
 }, { timestamps: true })
+
 const Blog = mongoose.model('Blog', blogSchema)
 
 export default Blog
