@@ -23,7 +23,8 @@ export const createBlogController = async (req, res) => {
             await newBlog.save()
         }
 
-        await newBlog.populate('user', 'fullName')
+        await newBlog.populate('user', 'fullName -_id')
+
 
         res.status(201).json({
             success: true,
